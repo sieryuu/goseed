@@ -11,6 +11,7 @@ import (
 	_articleHttpHandler "goseed/modules/article/delivery/http"
 	_articleRepo "goseed/modules/article/repository"
 	_articleUsecase "goseed/modules/article/usecase"
+	"goseed/utils/echohlpr"
 
 	"goseed/modules/user/delivery/dto"
 	_userHttpHandler "goseed/modules/user/delivery/http"
@@ -21,7 +22,7 @@ import (
 // ConfigureEcho will configure middleware and initialize all modules endpoints.
 func ConfigureEcho(e *echo.Echo, db *xorm.Engine, enforcer Enforcer) {
 	me := e.Group("/me")
-	v1 := e.Group("/v1/:domain")
+	v1 := e.Group("/v1/:" + echohlpr.TenantParam)
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -43,6 +44,7 @@ func ConfigureEcho(e *echo.Echo, db *xorm.Engine, enforcer Enforcer) {
 
 	db.Sync(new(models.User))
 	db.Sync(new(models.Article))
+	db.Sync(new(models.Tenant))
 
 	userRepo := _userRepo.NewPostgreUserRepository(db)
 	userUsecase := _userUsecase.NewUserUsecase(userRepo)

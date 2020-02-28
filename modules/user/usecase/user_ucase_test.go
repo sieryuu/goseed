@@ -6,7 +6,7 @@ import (
 	"goseed/modules/user/delivery/dto"
 	"goseed/modules/user/mocks"
 	"goseed/modules/user/usecase"
-	"goseed/utils/encryption"
+	"goseed/utils/hashhlpr"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,8 +14,6 @@ import (
 )
 
 func TestLogin(t *testing.T) {
-	mockUserRepo := new(mocks.Repository)
-
 	var (
 		username = "admin"
 		password = []byte("MySecureL0ngPassw0rd")
@@ -28,6 +26,7 @@ func TestLogin(t *testing.T) {
 	}
 
 	t.Run("success", func(t *testing.T) {
+		mockUserRepo := new(mocks.Repository)
 		mockUserRepo.On("GetByUsername", username).Return(&mockUser, nil).Once()
 		usecase := usecase.NewUserUsecase(mockUserRepo)
 
@@ -38,6 +37,7 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("invalid-password", func(t *testing.T) {
+		mockUserRepo := new(mocks.Repository)
 		// assign a wrong password hash
 		mockUser.PasswordHash = "WrongPassword"
 
@@ -51,6 +51,7 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("invalid-user", func(t *testing.T) {
+		mockUserRepo := new(mocks.Repository)
 		mockUserRepo.On("GetByUsername", mock.Anything).Return(&models.User{}, errors.New("")).Once()
 		usecase := usecase.NewUserUsecase(mockUserRepo)
 
@@ -62,7 +63,6 @@ func TestLogin(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	mockUserRepo := new(mocks.Repository)
 	mockUserCreation := &dto.UserCreation{
 		Username: "admin",
 		Password: "MySecureL0ngPassw0rd",
@@ -76,6 +76,7 @@ func TestCreate(t *testing.T) {
 	}
 
 	t.Run("success", func(t *testing.T) {
+		mockUserRepo := new(mocks.Repository)
 		mockUserRepo.On("GetByUsername", mock.Anything).Return(nil, nil).Once()
 		mockUserRepo.On("Create", mock.AnythingOfType("*models.User")).Return(int64(1), nil).Once()
 
@@ -84,10 +85,11 @@ func TestCreate(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, mockUser.Username, user.Username)
-		assert.True(t, encryption.ComparePasswords(user.PasswordHash, []byte(mockUserCreation.Password)))
+		assert.True(t, hashhlpr.ComparePasswords(user.PasswordHash, []byte(mockUserCreation.Password)))
 	})
 
 	t.Run("user-exist", func(t *testing.T) {
+		mockUserRepo := new(mocks.Repository)
 		mockUserRepo.On("GetByUsername", mock.Anything).Return(mockUser, nil).Once()
 		mockUserRepo.On("Create", mock.AnythingOfType("*models.User")).Return(int64(0), nil).Once()
 

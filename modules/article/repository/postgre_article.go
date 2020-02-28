@@ -16,9 +16,9 @@ func NewPostgreArticleRepository(conn *xorm.Engine) article.Repository {
 	return &postgreArticleRepository{conn}
 }
 
-func (m *postgreArticleRepository) Find() (*[]models.Article, error) {
+func (m *postgreArticleRepository) Find(tenantID uint) (*[]models.Article, error) {
 	articles := new([]models.Article)
-	err := m.Conn.Find(articles)
+	err := m.Conn.Where("tenant_id = ?", tenantID).Find(articles)
 	return articles, err
 }
 

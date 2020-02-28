@@ -5,7 +5,7 @@ import (
 	"goseed/models"
 	"goseed/modules/user"
 	"goseed/modules/user/delivery/dto"
-	"goseed/utils/encryption"
+	"goseed/utils/hashhlpr"
 )
 
 type userUsecase struct {
@@ -28,7 +28,7 @@ func (a *userUsecase) Login(name string, password []byte) (bool, error) {
 		return false, errors.New("invalid user or password")
 	}
 
-	isSuccess := encryption.ComparePasswords(user.PasswordHash, password)
+	isSuccess := hashhlpr.ComparePasswords(user.PasswordHash, password)
 
 	if isSuccess == false {
 		return false, errors.New("invalid user or password")

@@ -24,13 +24,13 @@ func (_m *Usecase) Create(_a0 *models.Article) error {
 	return r0
 }
 
-// Find provides a mock function with given fields:
-func (_m *Usecase) Find() (*[]models.Article, error) {
-	ret := _m.Called()
+// Find provides a mock function with given fields: tenantID
+func (_m *Usecase) Find(tenantID uint) (*[]models.Article, error) {
+	ret := _m.Called(tenantID)
 
 	var r0 *[]models.Article
-	if rf, ok := ret.Get(0).(func() *[]models.Article); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(uint) *[]models.Article); ok {
+		r0 = rf(tenantID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*[]models.Article)
@@ -38,8 +38,8 @@ func (_m *Usecase) Find() (*[]models.Article, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(tenantID)
 	} else {
 		r1 = ret.Error(1)
 	}

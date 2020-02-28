@@ -2,13 +2,11 @@ package models
 
 import "time"
 
-// User represents the user model.
-type User struct {
+// Tenant represents the tenant model.
+type Tenant struct {
 	ID            uint      `xorm:"'id' pk autoincr"`
-	Username      string    `xorm:"varchar(32) not null unique"`
-	FirstName     string    `xorm:"varchar(32) not null"`
-	LastName      string    `xorm:"varchar(32) not null"`
-	PasswordHash  string    `xorm:"not null"`
+	Name          string    `xorm:"varchar(255) not null unique"`
+	TenancyName   string    `xorm:"varchar(255) not null"`
 	CreatedAt     time.Time `xorm:"created"`
 	CreatedBy     string    `xorm:"varchar(32) not null"`
 	LastUpdatedAt time.Time `xorm:"updated"`

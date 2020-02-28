@@ -63,6 +63,7 @@ func (e *Enforcer) Enforce(next echo.HandlerFunc) echo.HandlerFunc {
 
 // getTenantFromPath will return tenant string from path
 // example: /v1/domain1/articles
+//         0/1 /2      /3
 // (second index of path is the domain)
 func getTenantFromPath(path string) string {
 	splits := strings.Split(path, "/")

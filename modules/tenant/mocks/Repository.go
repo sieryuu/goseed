@@ -11,18 +11,18 @@ type Repository struct {
 }
 
 // Create provides a mock function with given fields: _a0
-func (_m *Repository) Create(_a0 *models.Article) (int64, error) {
+func (_m *Repository) Create(_a0 *models.Tenant) (int64, error) {
 	ret := _m.Called(_a0)
 
 	var r0 int64
-	if rf, ok := ret.Get(0).(func(*models.Article) int64); ok {
+	if rf, ok := ret.Get(0).(func(*models.Tenant) int64); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Get(0).(int64)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*models.Article) error); ok {
+	if rf, ok := ret.Get(1).(func(*models.Tenant) error); ok {
 		r1 = rf(_a0)
 	} else {
 		r1 = ret.Error(1)
@@ -32,18 +32,18 @@ func (_m *Repository) Create(_a0 *models.Article) (int64, error) {
 }
 
 // Delete provides a mock function with given fields: _a0
-func (_m *Repository) Delete(_a0 *models.Article) (int64, error) {
+func (_m *Repository) Delete(_a0 *models.Tenant) (int64, error) {
 	ret := _m.Called(_a0)
 
 	var r0 int64
-	if rf, ok := ret.Get(0).(func(*models.Article) int64); ok {
+	if rf, ok := ret.Get(0).(func(*models.Tenant) int64); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Get(0).(int64)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*models.Article) error); ok {
+	if rf, ok := ret.Get(1).(func(*models.Tenant) error); ok {
 		r1 = rf(_a0)
 	} else {
 		r1 = ret.Error(1)
@@ -52,22 +52,22 @@ func (_m *Repository) Delete(_a0 *models.Article) (int64, error) {
 	return r0, r1
 }
 
-// Find provides a mock function with given fields: tenantID
-func (_m *Repository) Find(tenantID uint) (*[]models.Article, error) {
-	ret := _m.Called(tenantID)
+// Find provides a mock function with given fields:
+func (_m *Repository) Find() (*[]models.Tenant, error) {
+	ret := _m.Called()
 
-	var r0 *[]models.Article
-	if rf, ok := ret.Get(0).(func(uint) *[]models.Article); ok {
-		r0 = rf(tenantID)
+	var r0 *[]models.Tenant
+	if rf, ok := ret.Get(0).(func() *[]models.Tenant); ok {
+		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*[]models.Article)
+			r0 = ret.Get(0).(*[]models.Tenant)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(tenantID)
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -76,15 +76,15 @@ func (_m *Repository) Find(tenantID uint) (*[]models.Article, error) {
 }
 
 // First provides a mock function with given fields: id
-func (_m *Repository) First(id int) (*models.Article, error) {
+func (_m *Repository) First(id int) (*models.Tenant, error) {
 	ret := _m.Called(id)
 
-	var r0 *models.Article
-	if rf, ok := ret.Get(0).(func(int) *models.Article); ok {
+	var r0 *models.Tenant
+	if rf, ok := ret.Get(0).(func(int) *models.Tenant); ok {
 		r0 = rf(id)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Article)
+			r0 = ret.Get(0).(*models.Tenant)
 		}
 	}
 
@@ -98,16 +98,16 @@ func (_m *Repository) First(id int) (*models.Article, error) {
 	return r0, r1
 }
 
-// GetByTitle provides a mock function with given fields: title
-func (_m *Repository) GetByTitle(title string) (*models.Article, error) {
+// GetByName provides a mock function with given fields: title
+func (_m *Repository) GetByName(title string) (*models.Tenant, error) {
 	ret := _m.Called(title)
 
-	var r0 *models.Article
-	if rf, ok := ret.Get(0).(func(string) *models.Article); ok {
+	var r0 *models.Tenant
+	if rf, ok := ret.Get(0).(func(string) *models.Tenant); ok {
 		r0 = rf(title)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.Article)
+			r0 = ret.Get(0).(*models.Tenant)
 		}
 	}
 
@@ -122,18 +122,18 @@ func (_m *Repository) GetByTitle(title string) (*models.Article, error) {
 }
 
 // Update provides a mock function with given fields: _a0
-func (_m *Repository) Update(_a0 *models.Article) (int64, error) {
+func (_m *Repository) Update(_a0 *models.Tenant) (int64, error) {
 	ret := _m.Called(_a0)
 
 	var r0 int64
-	if rf, ok := ret.Get(0).(func(*models.Article) int64); ok {
+	if rf, ok := ret.Get(0).(func(*models.Tenant) int64); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Get(0).(int64)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*models.Article) error); ok {
+	if rf, ok := ret.Get(1).(func(*models.Tenant) error); ok {
 		r1 = rf(_a0)
 	} else {
 		r1 = ret.Error(1)

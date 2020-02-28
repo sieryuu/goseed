@@ -23,8 +23,6 @@ type Token struct {
 }
 
 func TestLogin(t *testing.T) {
-	mockUserUsecase := new(mocks.Usecase)
-
 	mockuserLogin := &dto.UserLogin{
 		Username: "admin",
 		Password: "MyLongPassword",
@@ -34,6 +32,7 @@ func TestLogin(t *testing.T) {
 	assert.NoError(t, err)
 
 	t.Run("success", func(t *testing.T) {
+		mockUserUsecase := new(mocks.Usecase)
 		mockUserUsecase.On("Login", mock.Anything, mock.Anything).Return(true, nil).Once()
 
 		e := echo.New()
@@ -61,6 +60,7 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("login-fail", func(t *testing.T) {
+		mockUserUsecase := new(mocks.Usecase)
 		mockUserUsecase.On("Login", mock.Anything, mock.Anything).Return(false, errors.New("")).Once()
 
 		e := echo.New()
@@ -83,8 +83,6 @@ func TestLogin(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	mockUserUsecase := new(mocks.Usecase)
-
 	mockUserCreation := &dto.UserCreation{
 		Username:  "admin",
 		FirstName: "John",
@@ -96,6 +94,7 @@ func TestCreate(t *testing.T) {
 	assert.NoError(t, err)
 
 	t.Run("success", func(t *testing.T) {
+		mockUserUsecase := new(mocks.Usecase)
 		mockUserUsecase.On("Create", mock.Anything).Return(nil, nil).Once()
 
 		e := echo.New()
@@ -117,6 +116,7 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("user-exist", func(t *testing.T) {
+		mockUserUsecase := new(mocks.Usecase)
 		mockUserUsecase.On("Create", mock.Anything).Return(nil, errors.New("")).Once()
 
 		e := echo.New()

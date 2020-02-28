@@ -3,6 +3,7 @@ package http
 import (
 	"goseed/models"
 	"goseed/modules/article"
+	"goseed/utils/echohlpr"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -24,7 +25,9 @@ func NewArticleHandler(e *echo.Group, usecase article.Usecase) {
 
 // Find will find all articles.
 func (a *ArticleHandler) Find(e echo.Context) error {
-	articles, _ := a.ArticleUsecase.Find()
+	tenantID := echohlpr.GetTenant(e)
+
+	articles, _ := a.ArticleUsecase.Find(tenantID)
 	return e.JSON(http.StatusOK, articles)
 }
 

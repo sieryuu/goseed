@@ -12,12 +12,12 @@ import (
 )
 
 func TestCreate(t *testing.T) {
-	mockArticleRepo := new(mocks.Repository)
 	mockArticle := models.Article{
 		Title: "Article #1",
 	}
 
 	t.Run("success", func(t *testing.T) {
+		mockArticleRepo := new(mocks.Repository)
 		mockArticleRepo.On("Create", mock.Anything).Return(int64(1), nil).Once()
 		mockArticleRepo.On("GetByTitle", mockArticle.Title).Return(nil, nil).Once()
 
@@ -28,6 +28,7 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("existing-title", func(t *testing.T) {
+		mockArticleRepo := new(mocks.Repository)
 		mockArticleRepo.On("Create", mock.Anything).Return(int64(1), nil).Once()
 		mockArticleRepo.On("GetByTitle", mockArticle.Title).Return(&mockArticle, nil).Once()
 
@@ -40,20 +41,30 @@ func TestCreate(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
-	mockArticleRepo := new(mocks.Repository)
-
 	mockListArticles := make([]models.Article, 0)
 	var mockArticle models.Article
 	faker.FakeData(&mockArticle)
 	mockListArticles = append(mockListArticles, mockArticle)
 
 	t.Run("success", func(t *testing.T) {
-		mockArticleRepo.On("Find").Return(&mockListArticles, nil).Once()
+		mockArticleRepo := new(mocks.Repository)
+		mockArticleRepo.On("Find", mock.AnythingOfType("uint")).Return(&mockListArticles, nil).Once()
 
 		usecase := usecase.NewArticleUsecase(mockArticleRepo)
-		articles, err := usecase.Find()
+		articles, err := usecase.Find(1)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, articles)
+	})
+
+	t.Run("tenant-aware", func(t *testing.T) {
+		mockArticleRepo := new(mocks.Repository)
+		mockArticleRepo.On("Find", mock.AnythingOfType("uint")).Return(nil, nil).Once()
+
+		usecase := usecase.NewArticleUsecase(mockArticleRepo)
+		articles, err := usecase.Find(1)
+
+		assert.NoError(t, err)
+		assert.Nil(t, articles)
 	})
 }

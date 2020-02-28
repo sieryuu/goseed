@@ -3,7 +3,7 @@ package http_test
 import (
 	"encoding/json"
 	"goseed/models"
-	"goseed/modules/article/mocks"
+	"goseed/modules/tenant/mocks"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -15,29 +15,29 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	_articlehttp "goseed/modules/article/delivery/http"
+	_tenanthttp "goseed/modules/tenant/delivery/http"
 )
 
 func TestFind(t *testing.T) {
-	var mockArticle models.Article
-	err := faker.FakeData(&mockArticle)
+	var mockTenant models.Tenant
+	err := faker.FakeData(&mockTenant)
 	assert.NoError(t, err)
 
-	mockListArticle := make([]models.Article, 0)
-	mockListArticle = append(mockListArticle, mockArticle)
+	mockListTenant := make([]models.Tenant, 0)
+	mockListTenant = append(mockListTenant, mockTenant)
 
 	mockUsecase := new(mocks.Usecase)
-	mockUsecase.On("Find", mock.Anything).Return(&mockListArticle, nil)
+	mockUsecase.On("Find").Return(&mockListTenant, nil)
 
 	e := echo.New()
-	req, err := http.NewRequest(echo.GET, "/v1/1/articles", strings.NewReader(""))
+	req, err := http.NewRequest(echo.GET, "/v1/tenants", strings.NewReader(""))
 	assert.NoError(t, err)
 
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	handler := _articlehttp.ArticleHandler{
-		ArticleUsecase: mockUsecase,
+	handler := _tenanthttp.TenantHandler{
+		TenantUsecase: mockUsecase,
 	}
 	err = handler.Find(c)
 	// require.NoError will halt the test if found any error
@@ -48,26 +48,26 @@ func TestFind(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	var mockArticle models.Article
-	err := faker.FakeData(&mockArticle)
+	var mockTenant models.Tenant
+	err := faker.FakeData(&mockTenant)
 	assert.NoError(t, err)
 
 	mockUsecase := new(mocks.Usecase)
 	mockUsecase.On("Create", mock.Anything).Return(nil)
 
-	json, err := json.Marshal(mockArticle)
+	json, err := json.Marshal(mockTenant)
 	assert.NoError(t, err)
 
 	e := echo.New()
-	req, err := http.NewRequest(echo.POST, "/v1/1/articles", strings.NewReader(string(json)))
+	req, err := http.NewRequest(echo.POST, "/v1/tenants", strings.NewReader(string(json)))
 	assert.NoError(t, err)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	handler := _articlehttp.ArticleHandler{
-		ArticleUsecase: mockUsecase,
+	handler := _tenanthttp.TenantHandler{
+		TenantUsecase: mockUsecase,
 	}
 	err = handler.Create(c)
 
