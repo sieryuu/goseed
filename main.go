@@ -2,6 +2,7 @@ package main
 
 import (
 	"go.uber.org/zap"
+	"xorm.io/core"
 	"xorm.io/xorm"
 
 	"github.com/labstack/echo/v4"
@@ -30,6 +31,10 @@ func main() {
 	// Setup Database
 	engine, err := xorm.NewEngine("postgres", conf.GetString("connectionstrings.default"))
 	defer engine.Close()
+
+	tMapper := core.NewPrefixMapper(core.SnakeMapper{}, "t_")
+	engine.SetTableMapper(tMapper)
+	engine.SetColumnMapper(core.GonicMapper{})
 
 	if err != nil {
 		logger.Error("failed to init database", zap.Error(err))

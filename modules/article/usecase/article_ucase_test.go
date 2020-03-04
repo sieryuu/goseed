@@ -57,14 +57,19 @@ func TestFind(t *testing.T) {
 		assert.NotNil(t, articles)
 	})
 
-	t.Run("tenant-aware", func(t *testing.T) {
+	t.Run("tenancy-test", func(t *testing.T) {
 		mockArticleRepo := new(mocks.Repository)
-		mockArticleRepo.On("Find", mock.AnythingOfType("uint")).Return(nil, nil).Once()
+		mockArticleRepo.On("Find", uint(1)).Return(nil, nil).Once()
+		mockArticleRepo.On("Find", uint(2)).Return(&mockListArticles, nil).Once()
 
 		usecase := usecase.NewArticleUsecase(mockArticleRepo)
 		articles, err := usecase.Find(1)
 
 		assert.NoError(t, err)
 		assert.Nil(t, articles)
+
+		articles, err = usecase.Find(2)
+		assert.NoError(t, err)
+		assert.NotNil(t, articles)
 	})
 }

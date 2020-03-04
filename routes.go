@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"xorm.io/xorm"
 
-	"goseed/models"
 	_articleHttpHandler "goseed/modules/article/delivery/http"
 	_articleRepo "goseed/modules/article/repository"
 	_articleUsecase "goseed/modules/article/usecase"
@@ -42,10 +41,6 @@ func ConfigureEcho(e *echo.Echo, db *xorm.Engine, enforcer Enforcer) {
 		return c.String(http.StatusOK, "pong")
 	})
 
-	db.Sync(new(models.User))
-	db.Sync(new(models.Article))
-	db.Sync(new(models.Tenant))
-
 	userRepo := _userRepo.NewPostgreUserRepository(db)
 	userUsecase := _userUsecase.NewUserUsecase(userRepo)
 	_userHttpHandler.NewUserHandler(me, userUsecase)
@@ -56,7 +51,7 @@ func ConfigureEcho(e *echo.Echo, db *xorm.Engine, enforcer Enforcer) {
 
 	// Seeding
 	userUsecase.Create(&dto.UserCreation{
-		Username:  "admin",
+		Username:  "user",
 		FirstName: "John",
 		LastName:  "Snow",
 		Password:  "123qwe",

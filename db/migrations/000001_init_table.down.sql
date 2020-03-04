@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS t_user;
+DROP TABLE IF EXISTS t_article;
+DROP TABLE IF EXISTS t_tenant;

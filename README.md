@@ -5,8 +5,9 @@ Go (golang) based SAAS approach to quick start your project backend
 ## Why goseed?
 - [TDD](https://en.wikipedia.org/wiki/Test-driven_development) (Test Driven Design) approach
 - SAAS approach API (with tenant)
-- API Versioning (using [echo](https://github.com/labstack/echo))
 - Clean Infrastructure (inspired by [go-clean-arch](https://github.com/bxcodec/go-clean-arch))
+- API Versioning (using [echo](https://github.com/labstac1k/echo))
+- Database Migration ([golang-migrate](https://github.com/golang-migrate/migrate))
 - JWT Authentication method ([jwt-go](https://github.com/dgrijalva/jwt-go))
 - Casbin Authorization ([casbin](https://github.com/casbin/casbin))
 - Popular ORM ([xorm](https://gitea.com/xorm/xorm))
@@ -21,6 +22,13 @@ git clone https://github.com/sieryuu/goseed.git
 
 # setup your database connection in ./appsettings.json
 # if you are not using postgreSql, please change the dialect in ./main.go
+
+# create a database if you havn't created one
+# on this example, database name is goseed
+
+# migrate database
+migrate -database postgres://postgres:postgres@localhost:5432/goseed?sslmode=disable -path db/migrations up
+# 1/u init_table (42.9171ms)
 
 # run the application
 go run .

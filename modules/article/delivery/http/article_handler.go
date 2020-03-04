@@ -34,14 +34,15 @@ func (a *ArticleHandler) Find(e echo.Context) error {
 // Create will insert a new article.
 func (a *ArticleHandler) Create(e echo.Context) error {
 	article := new(models.Article)
+	article.TenantID = echohlpr.GetTenant(e)
 
 	if err := e.Bind(article); err != nil {
-		return e.JSON(http.StatusBadRequest, err)
+		return e.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	err := a.ArticleUsecase.Create(article)
 	if err != nil {
-		return e.JSON(http.StatusBadRequest, err.Error)
+		return e.JSON(http.StatusBadRequest, err.Error())
 	}
 	return e.JSON(http.StatusCreated, article)
 }

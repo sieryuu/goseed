@@ -31,9 +31,14 @@ func NewCasbinEnforcer(engine *xorm.Engine) Enforcer {
 		panic(err)
 	}
 
-	// // example
-	casbinEnforcer.AddPolicy("admin", "domain1", "/v1/*/articles", "GET")
-	casbinEnforcer.AddPolicy("admin", "domain1", "/v1/*/articles", "POST")
+	// example
+	casbinEnforcer.DeleteRole("user")
+	casbinEnforcer.AddPolicy("admin", "1", "/v1/*/articles", "GET")
+	casbinEnforcer.AddPolicy("admin", "2", "/v1/*/articles", "GET")
+	casbinEnforcer.AddPolicy("admin", "1", "/v1/*/articles", "POST")
+	casbinEnforcer.AddPolicy("admin", "2", "/v1/*/articles", "POST")
+	casbinEnforcer.AddGroupingPolicy("user", "admin", "1")
+	casbinEnforcer.AddGroupingPolicy("user", "admin", "2")
 
 	casbinEnforcer.LoadPolicy()
 
@@ -62,8 +67,8 @@ func (e *Enforcer) Enforce(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 // getTenantFromPath will return tenant string from path
-// example: /v1/domain1/articles
-//         0/1 /2      /3
+// example:  /v1/1/articles
+//   index: 0/1 /2/3
 // (second index of path is the domain)
 func getTenantFromPath(path string) string {
 	splits := strings.Split(path, "/")
