@@ -36,7 +36,7 @@ func TestCreate(t *testing.T) {
 		err := usecase.Create(&mockTenant)
 
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "title already exists")
+		assert.Equal(t, err.Error(), "TenantCreateNameExistsMsg")
 	})
 }
 

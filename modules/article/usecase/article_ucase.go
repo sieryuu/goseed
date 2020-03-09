@@ -24,7 +24,7 @@ func (a *articleUsecase) Find(tenantID uint) (*[]models.Article, error) {
 func (a *articleUsecase) Create(article *models.Article) error {
 	// below 'article' variable only exists inside if scope
 	if article, _ := a.articleRepo.GetByTitle(article.Title); article != nil {
-		return errors.New("title already exists")
+		return errors.New("ArticleCreateTitleExistMsg")
 	}
 
 	// below article is taken from param

@@ -4,14 +4,14 @@ import "time"
 
 // User represents the user model.
 type User struct {
-	ID            uint      `xorm:"'id' pk autoincr"`
-	Username      string    `xorm:"varchar(32) not null unique"`
-	FirstName     string    `xorm:"varchar(32) not null"`
-	LastName      string    `xorm:"varchar(32) not null"`
-	PasswordHash  string    `xorm:"not null"`
+	ID            uint      `xorm:"autoincr"`
+	Username      string    `validate:"required"`
+	FirstName     string    `validate:"required"`
+	LastName      string    `validate:"required"`
+	PasswordHash  string    `validate:"required"`
 	CreatedAt     time.Time `xorm:"created"`
-	CreatedBy     string    `xorm:"varchar(32) not null"`
+	CreatedBy     string    `validate:"required"`
 	LastUpdatedAt time.Time `xorm:"updated"`
-	LastUpdatedBy string    `xorm:"varchar(32) not null"`
+	LastUpdatedBy string    `validate:"required"`
 	IsActive      bool
 }

@@ -2,7 +2,7 @@ package dto
 
 import (
 	"goseed/models"
-	"goseed/utils/hashhlpr"
+	"goseed/utils/hashutil"
 )
 
 type (
@@ -25,7 +25,7 @@ type (
 func (u *UserCreation) GetUser() *models.User {
 	return &models.User{
 		Username:     u.Username,
-		PasswordHash: hashhlpr.HashAndSalt([]byte(u.Password)),
+		PasswordHash: hashutil.HashAndSalt([]byte(u.Password)),
 		FirstName:    u.FirstName,
 		LastName:     u.LastName,
 	}

@@ -4,12 +4,12 @@ import "time"
 
 // Tenant represents the tenant model.
 type Tenant struct {
-	ID            uint      `xorm:"'id' pk autoincr"`
-	Name          string    `xorm:"varchar(255) not null unique"`
-	TenancyName   string    `xorm:"varchar(255) not null"`
+	ID            uint      `xorm:"autoincr"`
+	Name          string    `validate:"required" json:"name"`
+	TenancyName   string    `validate:"required" json:"tenancy_name"`
 	CreatedAt     time.Time `xorm:"created"`
-	CreatedBy     string    `xorm:"varchar(32) not null"`
+	CreatedBy     string    `validate:"required"`
 	LastUpdatedAt time.Time `xorm:"updated"`
-	LastUpdatedBy string    `xorm:"varchar(32) not null"`
+	LastUpdatedBy string    `validate:"required"`
 	IsActive      bool
 }

@@ -1,0 +1,63 @@
+[ArticleCreateFail]
+hash = "sha1-6c143557bdc0245d94e901ac3cf10b5a1a468a87"
+other = "Pembuatan Artikel Gagal"
+
+[ArticleCreateSuccessMsg]
+hash = "sha1-1f716992c3ed40c798fecac7f805098c0d507cef"
+other = "Artikel {{.title}} berhasil dibuat."
+
+[ArticleCreateSuccessTitle]
+hash = "sha1-e2f1dceeaafd37fe17bd11ab8ccee6e0c11004cb"
+other = "Artikel berhasil dibuat"
+
+[ArticleCreateTitleExistMsg]
+hash = "sha1-0fd63c17c58f10f0b118d424c4ed9926b6b27c4e"
+other = "Artikel dengan judul yang sama sudah ada. Silakan tentukan judul lain."
+
+[MeLoginInvalidMsg]
+hash = "sha1-3422c6e6757d0b0fd3cb7165bac1aa2ba92aafdd"
+other = "Nama pengguna dan / atau kata sandi tidak valid."
+
+[MeLoginInvalidTitle]
+hash = "sha1-b09c446306a2d0b54cc6fb043d65e4e95f1d4fb8"
+other = "Gagal masuk"
+
+[MeLoginSuccessMsg]
+hash = "sha1-3ea3d116898f6c86f58ced33eb80ceead0121593"
+other = "Selamat Datang {{.username}}!"
+
+[MeLoginSuccessTitle]
+hash = "sha1-f106b5401e145dc159a579d0058b360a008e86f4"
+other = "Login berhasil"
+
+[TenantCreateFail]
+hash = "sha1-4586d3a1bdfc75e3e256f8bc6d1eaa5257e172c6"
+other = "Pembuatan Tenant Gagal"
+
+[TenantCreateNameExistsMsg]
+hash = "sha1-e8609db7ea70133fe6bfcc36e163197d85612e44"
+other = "Tenant dengan nama yang sama sudah ada. Silakan tentukan nama lain."
+
+[TenantCreateSuccessMsg]
+hash = "sha1-de5a79701c21afe58c0fdc416a098e24af1f07a1"
+other = "Tenant {{.name}} berhasil dibuat."
+
+[TenantCreateSuccessTitle]
+hash = "sha1-fd33912e6662c86084da6ebb33c2c6fcfa6c1195"
+other = "Tenant berhasil dibuat"
+
+[UserCreateFailTitle]
+hash = "sha1-42ba7ebac179b5badd986982cc71710cd57b09da"
+other = "Pembuatan user gagal"
+
+[UserCreateSuccessMsg]
+hash = "sha1-50aa924bb96a9fba117d34d7dc113a711cffd26d"
+other = "User {{.username}} berhasil dibuat."
+
+[UserCreateSuccessTitle]
+hash = "sha1-01f793c45faf01e2a8381d6064171410c52bd760"
+other = "User berhasil dibuat"
+
+[UserCreateUsernameExistsMsg]
+hash = "sha1-fa7febaae586cd9b463ac83f0e1939154b755437"
+other = "Pengguna dengan username yang sama sudah ada. Silakan tentukan username lain."

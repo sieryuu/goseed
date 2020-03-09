@@ -1,7 +1,7 @@
-package hashhlpr_test
+package hashutil_test
 
 import (
-	"goseed/utils/hashhlpr"
+	"goseed/utils/hashutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,14 +11,14 @@ func TestComparePasswords(t *testing.T) {
 	password := []byte("MySecureL0ngPassw0rd")
 
 	t.Run("success", func(t *testing.T) {
-		hashString := hashhlpr.HashAndSalt(password)
-		res := hashhlpr.ComparePasswords(hashString, password)
+		hashString := hashutil.HashAndSalt(password)
+		res := hashutil.ComparePasswords(hashString, password)
 		assert.True(t, res)
 	})
 
 	t.Run("wrong-hash", func(t *testing.T) {
-		hashString := hashhlpr.HashAndSalt([]byte("WrongPassword"))
-		res := hashhlpr.ComparePasswords(hashString, password)
+		hashString := hashutil.HashAndSalt([]byte("WrongPassword"))
+		res := hashutil.ComparePasswords(hashString, password)
 		assert.False(t, res)
 	})
 }

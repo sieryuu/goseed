@@ -2,8 +2,12 @@ package http_test
 
 import (
 	"encoding/json"
+	"errors"
 	"goseed/models"
 	"goseed/modules/tenant/mocks"
+	"goseed/utils/echoutil"
+	"goseed/utils/i18nutil"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -11,9 +15,9 @@ import (
 
 	"github.com/bxcodec/faker"
 	"github.com/labstack/echo/v4"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
 
 	_tenanthttp "goseed/modules/tenant/delivery/http"
 )
@@ -41,37 +45,101 @@ func TestFind(t *testing.T) {
 	}
 	err = handler.Find(c)
 	// require.NoError will halt the test if found any error
-	require.NoError(t, err)
-
+	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, rec.Code)
+
 	mockUsecase.AssertExpectations(t)
 }
 
 func TestCreate(t *testing.T) {
-	var mockTenant models.Tenant
-	err := faker.FakeData(&mockTenant)
-	assert.NoError(t, err)
+	bundle := i18nutil.GetTestingi18nBundle()
+	l := i18nutil.GetTestingLocalizer()
 
-	mockUsecase := new(mocks.Usecase)
-	mockUsecase.On("Create", mock.Anything).Return(nil)
+	mockTenant := &models.Tenant{
+		Name:        "tenant",
+		TenancyName: "tenant name",
+	}
 
 	json, err := json.Marshal(mockTenant)
 	assert.NoError(t, err)
 
-	e := echo.New()
-	req, err := http.NewRequest(echo.POST, "/v1/tenants", strings.NewReader(string(json)))
-	assert.NoError(t, err)
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	e := echoutil.MockEcho()
 
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
+	t.Run("success", func(t *testing.T) {
+		mockUsecase := new(mocks.Usecase)
+		mockUsecase.On("Create", mock.Anything).Return(nil).Once()
 
-	handler := _tenanthttp.TenantHandler{
-		TenantUsecase: mockUsecase,
-	}
-	err = handler.Create(c)
+		req, err := http.NewRequest(echo.POST, "/v1/tenants", strings.NewReader(string(json)))
+		assert.NoError(t, err)
 
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusCreated, rec.Code)
-	mockUsecase.AssertExpectations(t)
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		res := httptest.NewRecorder()
+		c := e.NewContext(req, res)
+		c.Set("user", echoutil.GetLoginTkn("admin"))
+
+		handler := _tenanthttp.TenantHandler{
+			TenantUsecase: mockUsecase,
+			I18nBundle:    bundle,
+		}
+		err = handler.Create(c)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusCreated, res.Code)
+
+		body, err := ioutil.ReadAll(res.Body)
+		assert.NoError(t, err)
+
+		title, err := l.LocalizeMessage(&i18n.Message{ID: "TenantCreateSuccessTitle"})
+		assert.NoError(t, err)
+		msg, err := l.Localize(&i18n.LocalizeConfig{
+			MessageID: "TenantCreateSuccessMsg",
+			TemplateData: map[string]string{
+				"name": mockTenant.Name,
+			},
+		})
+		assert.NoError(t, err)
+
+		assert.Contains(t, string(body), title)
+		assert.Contains(t, string(body), msg)
+
+		mockUsecase.AssertExpectations(t)
+	})
+
+	t.Run("name-exists", func(t *testing.T) {
+		mockUsecase := new(mocks.Usecase)
+		mockUsecase.On("Create", mock.Anything).Return(errors.New("TenantCreateNameExistsMsg")).Once()
+
+		req, err := http.NewRequest(echo.POST, "/v1/tenants", strings.NewReader(string(json)))
+		assert.NoError(t, err)
+
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		res := httptest.NewRecorder()
+		c := e.NewContext(req, res)
+		c.Set("user", echoutil.GetLoginTkn("admin"))
+
+		handler := _tenanthttp.TenantHandler{
+			TenantUsecase: mockUsecase,
+			I18nBundle:    bundle,
+		}
+		err = handler.Create(c)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusConflict, res.Code)
+
+		body, err := ioutil.ReadAll(res.Body)
+		assert.NoError(t, err)
+
+		title, err := l.LocalizeMessage(&i18n.Message{ID: "TenantCreateFail"})
+		assert.NoError(t, err)
+		msg, err := l.Localize(&i18n.LocalizeConfig{
+			MessageID: "TenantCreateNameExistsMsg",
+			TemplateData: map[string]string{
+				"name": mockTenant.Name,
+			},
+		})
+		assert.NoError(t, err)
+
+		assert.Contains(t, string(body), title)
+		assert.Contains(t, string(body), msg)
+
+		mockUsecase.AssertExpectations(t)
+	})
 }

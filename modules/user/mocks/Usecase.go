@@ -2,7 +2,6 @@
 
 package mocks
 
-import dto "goseed/modules/user/delivery/dto"
 import mock "github.com/stretchr/testify/mock"
 import models "goseed/models"
 
@@ -12,26 +11,17 @@ type Usecase struct {
 }
 
 // Create provides a mock function with given fields: _a0
-func (_m *Usecase) Create(_a0 *dto.UserCreation) (*models.User, error) {
+func (_m *Usecase) Create(_a0 *models.User) error {
 	ret := _m.Called(_a0)
 
-	var r0 *models.User
-	if rf, ok := ret.Get(0).(func(*dto.UserCreation) *models.User); ok {
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*models.User) error); ok {
 		r0 = rf(_a0)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.User)
-		}
+		r0 = ret.Error(0)
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(*dto.UserCreation) error); ok {
-		r1 = rf(_a0)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // Login provides a mock function with given fields: name, password

@@ -3,77 +3,85 @@ package http
 import (
 	"goseed/modules/user"
 	"goseed/modules/user/delivery/dto"
+	"goseed/utils/echoutil"
+	"goseed/utils/httputil"
 	"net/http"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 // UserHandler represents httpHandler for user.
 type UserHandler struct {
 	UserUsecase user.Usecase
+	I18nBundle  *i18n.Bundle
 }
 
 // NewUserHandler will initialize the user / resource endpoint.
-func NewUserHandler(e *echo.Group, usecase user.Usecase) {
+func NewUserHandler(e *echo.Group, usecase user.Usecase, i18nBundle *i18n.Bundle) {
 	handler := &UserHandler{
 		UserUsecase: usecase,
+		I18nBundle:  i18nBundle,
 	}
 
-	e.POST("/login", handler.Login)
-}
-
-// Login will authenticate user & password given.
-func (a *UserHandler) Login(e echo.Context) error {
-	user := new(dto.UserLogin)
-
-	if err := e.Bind(user); err != nil {
-		return e.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	res, err := a.UserUsecase.Login(user.Username, []byte(user.Password))
-	if err != nil {
-		return e.JSON(http.StatusBadRequest, err.Error())
-	}
-	if res == false {
-		return e.JSON(http.StatusBadRequest, "")
-	}
-
-	// set claims
-	claims := &dto.JwtCustomClaims{
-		user.Username,
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
-		},
-	}
-
-	// create token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	// generate encoded token and send it as response
-	t, err := token.SignedString([]byte(dto.JWTSigningKey))
-	if err != nil {
-		return e.JSON(http.StatusInternalServerError, err.Error)
-	}
-
-	return e.JSON(http.StatusOK, map[string]string{
-		"token": t,
-	})
+	e.POST("/users", handler.Create)
 }
 
 // Create will create models.User into database.
 func (a *UserHandler) Create(e echo.Context) error {
+	l := echoutil.GetLocalizerFromEchoContext(a.I18nBundle, e)
+	createFailTitle, _ := l.LocalizeMessage(&i18n.Message{ID: "UserCreateFailTitle"})
+
 	userCreation := new(dto.UserCreation)
 
 	if err := e.Bind(userCreation); err != nil {
-		return e.JSON(http.StatusBadRequest, err.Error())
+		return e.JSON(http.StatusBadRequest, httputil.ResponseBody{
+			Title: createFailTitle,
+			Msg:   err.Error(),
+		})
 	}
 
-	user, err := a.UserUsecase.Create(userCreation)
+	user := userCreation.GetUser()
+	user.CreatedBy = echoutil.GetLoggedInUser(e)
+	user.LastUpdatedBy = echoutil.GetLoggedInUser(e)
+
+	if err := e.Validate(user); err != nil {
+		return e.JSON(http.StatusBadRequest, httputil.ResponseBody{
+			Title: createFailTitle,
+			Msg:   err.Error(),
+		})
+	}
+
+	err := a.UserUsecase.Create(user)
 	if err != nil {
-		return e.JSON(http.StatusBadRequest, err.Error())
+		statusCode := http.StatusInternalServerError
+		switch err.Error() {
+		case "UserCreateUsernameExistsMsg":
+			statusCode = http.StatusConflict
+		}
+
+		return e.JSON(statusCode, httputil.ResponseBody{
+			Title: createFailTitle,
+			Msg: l.MustLocalize(&i18n.LocalizeConfig{
+				DefaultMessage: &i18n.Message{
+					ID:    err.Error(),
+					Other: err.Error(), // system error
+				},
+			}),
+		})
 	}
 
-	return e.JSON(http.StatusCreated, user)
+	title, _ := l.LocalizeMessage(&i18n.Message{ID: "UserCreateSuccessTitle"})
+	return e.JSON(http.StatusCreated, httputil.ResponseBody{
+		Title: title,
+		Msg: l.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: &i18n.Message{
+				ID: "UserCreateSuccessMsg",
+			},
+			TemplateData: map[string]string{
+				"username": user.Username,
+			},
+		}),
+		Data: user,
+	})
 }

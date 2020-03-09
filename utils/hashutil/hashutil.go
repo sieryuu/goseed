@@ -1,4 +1,4 @@
-package hashhlpr
+package hashutil
 
 import (
 	"log"

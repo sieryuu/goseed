@@ -4,8 +4,7 @@ import (
 	"errors"
 	"goseed/models"
 	"goseed/modules/user"
-	"goseed/modules/user/delivery/dto"
-	"goseed/utils/hashhlpr"
+	"goseed/utils/hashutil"
 )
 
 type userUsecase struct {
@@ -17,38 +16,37 @@ func NewUserUsecase(a user.Repository) user.Usecase {
 	return &userUsecase{a}
 }
 
-func (a *userUsecase) Login(name string, password []byte) (bool, error) {
+func (a *userUsecase) Login(name string, password []byte) (bool, error) { // Login always return "invalid username or password" if fail
 	user, err := a.userRepo.GetByUsername(name)
-	// something bad happens
 	if err != nil {
 		return false, err
 	}
+
 	// wrong user name given
 	if user == nil {
-		return false, errors.New("invalid user or password")
+		return false, nil
 	}
 
-	isSuccess := hashhlpr.ComparePasswords(user.PasswordHash, password)
+	isSuccess := hashutil.ComparePasswords(user.PasswordHash, password)
 
 	if isSuccess == false {
-		return false, errors.New("invalid user or password")
+		return false, nil
 	}
 
 	return isSuccess, nil
 }
 
-func (a *userUsecase) Create(userCreation *dto.UserCreation) (*models.User, error) {
-	user, err := a.userRepo.GetByUsername(userCreation.Username)
+func (a *userUsecase) Create(user *models.User) error {
+	user, err := a.userRepo.GetByUsername(user.Username)
 	// something bad happens
 	if err != nil {
-		return nil, err
+		return err
 	}
-	// wrong user name given
+	// username already exists
 	if user != nil {
-		return nil, errors.New("user already exists")
+		return errors.New("UserCreateUsernameExistsMsg")
 	}
 
-	user = userCreation.GetUser()
 	_, err = a.userRepo.Create(user)
-	return user, err
+	return err
 }

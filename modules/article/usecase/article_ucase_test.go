@@ -27,7 +27,7 @@ func TestCreate(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("existing-title", func(t *testing.T) {
+	t.Run("title-exists", func(t *testing.T) {
 		mockArticleRepo := new(mocks.Repository)
 		mockArticleRepo.On("Create", mock.Anything).Return(int64(1), nil).Once()
 		mockArticleRepo.On("GetByTitle", mockArticle.Title).Return(&mockArticle, nil).Once()
@@ -36,7 +36,7 @@ func TestCreate(t *testing.T) {
 		err := usecase.Create(&mockArticle)
 
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "title already exists")
+		assert.Equal(t, err.Error(), "ArticleCreateTitleExistMsg")
 	})
 }
 

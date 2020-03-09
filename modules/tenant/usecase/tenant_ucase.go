@@ -24,7 +24,7 @@ func (a *tenantUsecase) Find() (*[]models.Tenant, error) {
 func (a *tenantUsecase) Create(tenant *models.Tenant) error {
 	// below 'tenant' variable only exists inside if scope
 	if tenant, _ := a.tenantRepo.GetByName(tenant.Name); tenant != nil {
-		return errors.New("title already exists")
+		return errors.New("TenantCreateNameExistsMsg")
 	}
 
 	// below tenant is taken from param
