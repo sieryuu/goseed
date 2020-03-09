@@ -13,11 +13,12 @@ Go (golang) based SAAS approach to quick start your project backend
 - Popular ORM ([xorm](https://gitea.com/xorm/xorm))
 - Application Configuration ([viper](https://github.com/spf13/viper))
 - Logging library ([zap](https://github.com/uber-go/zap))
+- Support multilanguages ([go-i18n](https://github.com/nicksnyder/go-i18n))
 - and much more...
 
 ## Run the application
 ```bash
-# cloning
+# clone repository
 git clone https://github.com/sieryuu/goseed.git
 
 # setup your database connection in ./appsettings.json
